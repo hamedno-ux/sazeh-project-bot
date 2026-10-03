@@ -1,0 +1,30 @@
+name: Daily Project Report
+
+on:
+  schedule:
+    # هر روز ساعت ۹ صبح به وقت ایران (۵:۳۰ صبح UTC)
+    - cron: '30 5 * * *'
+    # هر دو روز یکبار هم اجرا می‌شه (چون روزانه اجرا می‌شه، می‌تونیم بعداً جدا کنیم)
+  workflow_dispatch:  # امکان اجرای دستی
+
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run bot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python bot.py
